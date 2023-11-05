@@ -1,15 +1,24 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import cn from "../common/helpers/UtilsKit";
 
 const FEATURE_IMAGE_STYLES = "first:col-span-2 first:row-span-2";
 const DEFAULT_IMAGE_STYLES = "border border-gray-300 rounded-md cursor-pointer";
-const SELECTED_IMAGE_STYLES = "bg-black opacity-50";
+const SELECTED_IMAGE_STYLES = "bg-black opacity-20";
 
-export default function ImageCard({ image, handleImageSelection }) {
+export default function ImageCard({
+  image,
+  handleImageSelection,
+  selectAllImages,
+  individuallySelected,
+}) {
   const { src, alt } = image;
   const [selectedImage, setSelectedImage] = useState(false);
+
+  useEffect(() => {
+    setSelectedImage(selectAllImages);
+  }, [selectAllImages]);
 
   const handleImageDelete = () => {
     setSelectedImage(!selectedImage);
@@ -24,7 +33,10 @@ export default function ImageCard({ image, handleImageSelection }) {
             className="absolute top-2 left-2 z-10"
             onClick={handleImageDelete}
           >
-            <input type="checkbox" checked={selectedImage} />
+            <input
+              type="checkbox"
+              checked={individuallySelected || selectedImage}
+            />
           </div>
           <div
             className={`w-full h-full rounded-md border border-gray-300 overflow-hidden ${

@@ -2,7 +2,12 @@
 import { useState } from "react";
 import ImageCard from "./ImageCard";
 import ImageUploader from "./ImageUploader";
-import { handleNumericalCasesInWordsForImages } from "../common/helpers/UtilsKit";
+import {
+  handleDynamicToastMsg,
+  handleNumericalCasesInWordsForImages,
+} from "../common/helpers/UtilsKit";
+import toast from "react-hot-toast";
+import EmptyState from "./EmptyState";
 
 export default function ImageGrid() {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -42,11 +47,11 @@ export default function ImageGrid() {
     });
     setImageData(newImageData);
     setSelectedImages([]);
+    toast.success(handleDynamicToastMsg(selectedImages.length));
   };
-  console.log(imageData);
 
   return (
-    <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md">
+    <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md w-full">
       <header className="pt-6 px-6 space-y-2">
         <h2 className="text-base font-semibold text-gray-700">Gallery</h2>
         <div className="flex justify-between items-center">
@@ -64,22 +69,26 @@ export default function ImageGrid() {
           ) : null}
         </div>
       </header>
-      <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {imageData?.map((image) => (
-          <ImageCard
-            image={image}
-            key={image.uid}
-            handleImageSelection={handleImageSelection}
+      {imageData.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {imageData?.map((image) => (
+            <ImageCard
+              image={image}
+              key={image.uid}
+              handleImageSelection={handleImageSelection}
+            />
+          ))}
+          <ImageUploader
+            id="sample-image-uploader"
+            name="sample-image-uploader"
+            label="Image Uploader"
+            htmlFor="sample-image-uploader"
+            helperText="Maximum size: 10MB"
           />
-        ))}
-        <ImageUploader
-          id="sample-image-uploader"
-          name="sample-image-uploader"
-          label="Image Uploader"
-          htmlFor="sample-image-uploader"
-          helperText="Maximum size: 10MB"
-        />
-      </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -17,3 +17,12 @@ export function handleNumericalCasesInWordsForImages(variable) {
     return `${variable} images selected`;
   }
 }
+
+// function for handling dynamic toast messages
+export function handleDynamicToastMsg(imageLength) {
+  if (imageLength === 1) {
+    return "1 Image Deleted Successfully";
+  } else {
+    return `${imageLength} Images Deleted Successfully`;
+  }
+}

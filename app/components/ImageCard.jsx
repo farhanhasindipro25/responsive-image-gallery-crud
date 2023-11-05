@@ -3,8 +3,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import cn from "../common/helpers/UtilsKit";
 
-const FEATURE_IMAGE_STYLES =
-  "first-col-span-1 first:row-span-2 md:first:col-span-2 md:first:row-span-2";
+const FEATURE_IMAGE_STYLES = "first:col-span-2 first:row-span-2";
 const DEFAULT_IMAGE_STYLES = "border border-gray-300 rounded-md cursor-pointer";
 const SELECTED_IMAGE_STYLES =
   "group-hover:opacity-100 bg-black opacity-20 transition-opacity";

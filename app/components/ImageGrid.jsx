@@ -1,5 +1,8 @@
+"use client";
+import { useState } from "react";
 import ImageCard from "./ImageCard";
 import ImageUploader from "./ImageUploader";
+import { handleNumericalCasesInWordsForImages } from "../common/helpers/UtilsKit";
 
 const imageData = [
   { uid: "1", src: "/images/image-1.webp", name: "Image-1" },
@@ -16,14 +19,34 @@ const imageData = [
 ];
 
 export default function ImageGrid() {
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const handleImageSelection = (selectedImage, isSelected) => {
+    if (isSelected) {
+      // checking for the selected image and pushing that to the selectedImages array to keep track of the total number of selected images
+      setSelectedImages([...selectedImages, selectedImage]);
+    } else {
+      // keeping the selectedImages array updated by removing that specific image that has been deselected by using the filter method
+      setSelectedImages(
+        selectedImages.filter((img) => selectedImage.uid !== img.uid)
+      );
+    }
+  };
   return (
     <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md">
-      <header className="p-4">
+      <header className="p-4 flex items-center justify-between">
         <h2 className="text-base font-semibold text-gray-700">Gallery</h2>
+        <h2 className="text-base font-semibold text-gray-700">
+          {handleNumericalCasesInWordsForImages(selectedImages.length)}
+        </h2>
       </header>
       <div className="p-4 grid grid-cols-5 gap-4">
         {imageData?.map((image) => (
-          <ImageCard image={image} key={image.uid} />
+          <ImageCard
+            image={image}
+            key={image.uid}
+            handleImageSelection={handleImageSelection}
+          />
         ))}
         <ImageUploader
           id="sample-image-uploader"

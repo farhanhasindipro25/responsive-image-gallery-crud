@@ -1,4 +1,5 @@
 import ImageCard from "./ImageCard";
+import ImageUploader from "./ImageUploader";
 
 const imageData = [
   { uid: "1", src: "/images/image-1.webp", name: "Image-1" },
@@ -16,14 +17,21 @@ const imageData = [
 
 export default function ImageGrid() {
   return (
-    <section className="divide-y divide-gray-300 space-y-4 border-md bg-gray-white shadow-md p-4">
-      <header>
+    <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md">
+      <header className="p-4">
         <h2 className="text-base font-semibold text-gray-700">Gallery</h2>
       </header>
-      <div className="pt-4 grid grid-cols-5 gap-4">
+      <div className="p-4 grid grid-cols-5 gap-4">
         {imageData?.map((image) => (
-          <ImageCard src={image.src} alt={image.name} key={image.uid} />
+          <ImageCard image={image} key={image.uid} />
         ))}
+        <ImageUploader
+          id="sample-image-uploader"
+          name="sample-image-uploader"
+          label="Image Uploader"
+          htmlFor="sample-image-uploader"
+          helperText="Maximum size: 10MB"
+        />
       </div>
     </section>
   );

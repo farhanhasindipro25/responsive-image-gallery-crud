@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
         <header>
           <Navbar />
         </header>
-        <main className="max-w-7xl mx-auto px-4 my-10">{children}</main>
+        <main className="w-full h-full bg-gray-100">{children}</main>
       </body>
     </html>
   );

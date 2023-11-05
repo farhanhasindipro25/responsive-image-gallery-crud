@@ -64,7 +64,7 @@ export default function ImageGrid() {
           ) : null}
         </div>
       </header>
-      <div className="p-4 grid grid-cols-5 gap-4">
+      <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {imageData?.map((image) => (
           <ImageCard
             image={image}

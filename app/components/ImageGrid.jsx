@@ -52,7 +52,7 @@ export default function ImageGrid() {
   };
 
   return (
-    <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md w-full">
+    <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md w-full overflow-hidden">
       <header className="pt-6 px-6 space-y-2">
         <h2 className="text-base font-semibold text-gray-700">Gallery</h2>
         <div className="flex justify-between items-center">
@@ -82,7 +82,7 @@ export default function ImageGrid() {
         <Droppable droppableId="image-grid" direction="horizontal">
           {(provided) => (
             <div
-              className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+              className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 overflow-hidden"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >

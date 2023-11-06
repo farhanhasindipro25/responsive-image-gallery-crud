@@ -97,6 +97,9 @@ export default function ImageGrid() {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       ref={provided.innerRef}
+                      style={{
+                        gridArea: index === 0 ? "span 2 / span 2" : "auto",
+                      }}
                     >
                       <ImageCard
                         image={image}

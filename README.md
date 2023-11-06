@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+"use client";
+import { Fragment, useState } from "react";
+import ImageCard from "./ImageCard";
+import ImageUploader from "./ImageUploader";
+import {
+  handleDynamicToastMsg,
+  handleNumericalCasesInWordsForImages,
+} from "../common/helpers/UtilsKit";
+import toast from "react-hot-toast";
+import EmptyState from "./EmptyState";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-## Getting Started
+export default function ImageGrid() {
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [imageData, setImageData] = useState([
+    { uid: "1", src: "/images/image-1.webp", name: "Image-1" },
+    { uid: "2", src: "/images/image-2.webp", name: "Image-2" },
+    { uid: "3", src: "/images/image-3.webp", name: "Image-3" },
+    { uid: "4", src: "/images/image-4.webp", name: "Image-4" },
+    { uid: "5", src: "/images/image-5.webp", name: "Image-5" },
+    { uid: "6", src: "/images/image-6.webp", name: "Image-6" },
+    { uid: "7", src: "/images/image-7.webp", name: "Image-7" },
+    { uid: "8", src: "/images/image-8.webp", name: "Image-8" },
+    { uid: "9", src: "/images/image-9.webp", name: "Image-9" },
+    { uid: "10", src: "/images/image-10.jpeg", name: "Image-10" },
+    { uid: "11", src: "/images/image-11.jpeg", name: "Image-11" },
+  ]);
 
-First, run the development server:
+  const handleImageSelection = (selectedImage, isSelected) => {
+    if (isSelected) {
+      // checking for the selected image and pushing that to the selectedImages array to keep track of the total number of selected images
+      setSelectedImages([...selectedImages, selectedImage]);
+    } else {
+      // keeping the selectedImages array updated by removing that specific image that has been deselected by using the filter method
+      setSelectedImages(
+        selectedImages.filter((img) => selectedImage.uid !== img.uid)
+      );
+    }
+  };
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  const handleDeleteImages = () => {
+    let newImageData = [...imageData];
+    // removing the selected images from newImageData
+    selectedImages.forEach((selectedImage) => {
+      newImageData = newImageData.filter(
+        (img) => selectedImage.uid !== img.uid
+      );
+    });
+    setImageData(newImageData);
+    setSelectedImages([]);
+    toast.success(handleDynamicToastMsg(selectedImages.length));
+  };
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  return (
+    <section className="divide-y divide-gray-300 space-y-4 border-md bg-white rounded-lg shadow-md w-full">
+      <header className="pt-6 px-6 space-y-2">
+        <h2 className="text-base font-semibold text-gray-700">Gallery</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-base font-medium text-gray-500">
+            {handleNumericalCasesInWordsForImages(selectedImages.length)}
+          </h2>
+          {selectedImages.length > 0 ? (
+            <button
+              onClick={handleDeleteImages}
+              type="submit"
+              className="text-sm font-semibold cursor-pointer bg-red-500 px-5 py-3 rounded-md text-white hover:bg-red-600 focus:outline focus:ring-1 focus:ring-offset-1 focus:ring-red-50"
+            >
+              Delete
+            </button>
+          ) : null}
+        </div>
+      </header>
+      {imageData.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <DragDropContext
+          onDragEnd={() => {
+            console.log("d");
+          }}
+        >
+          <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {imageData?.map((image, index) => (
+              <Droppable
+                droppableId={image.uid}
+                type="group"
+                direction="horizontal"
+                key={image.uid}
+              >
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    <Draggable draggableId={image.uid} index={index}>
+                      {(dragProvided) => (
+                        <div
+                          {...dragProvided.dragHandleProps}
+                          {...dragProvided.draggableProps}
+                          ref={dragProvided.innerRef}
+                        >
+                          <ImageCard
+                            image={image}
+                            key={image.uid}
+                            handleImageSelection={handleImageSelection}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  </div>
+                )}
+              </Droppable>
+            ))}
+            <ImageUploader />
+          </div>
+        </DragDropContext>
+      )}
+    </section>
+  );
+}

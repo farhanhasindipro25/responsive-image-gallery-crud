@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import ImageCard from "./ImageCard";
 import ImageUploader from "./ImageUploader";
 import {
@@ -8,6 +8,7 @@ import {
 } from "../common/helpers/UtilsKit";
 import toast from "react-hot-toast";
 import EmptyState from "./EmptyState";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export default function ImageGrid() {
   const [selectedImages, setSelectedImages] = useState([]);
@@ -69,26 +70,48 @@ export default function ImageGrid() {
           ) : null}
         </div>
       </header>
-      {imageData.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {imageData?.map((image) => (
-            <ImageCard
-              image={image}
-              key={image.uid}
-              handleImageSelection={handleImageSelection}
-            />
-          ))}
-          <ImageUploader
-            id="sample-image-uploader"
-            name="sample-image-uploader"
-            label="Image Uploader"
-            htmlFor="sample-image-uploader"
-            helperText="Maximum size: 10MB"
-          />
-        </div>
-      )}
+      <DragDropContext
+        onDragEnd={(result) => {
+          if (!result.destination) return;
+          const items = Array.from(imageData);
+          const [reorderedItem] = items.splice(result.source.index, 1);
+          items.splice(result.destination.index, 0, reorderedItem);
+          setImageData(items);
+        }}
+      >
+        <Droppable droppableId="image-grid" direction="horizontal">
+          {(provided) => (
+            <div
+              className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {imageData.map((image, index) => (
+                <Draggable
+                  key={image.uid}
+                  draggableId={image.uid}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                    >
+                      <ImageCard
+                        image={image}
+                        key={image.uid}
+                        handleImageSelection={handleImageSelection}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              <ImageUploader />
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </section>
   );
 }
